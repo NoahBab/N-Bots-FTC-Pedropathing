@@ -23,12 +23,12 @@ public class FConstants {
         FollowerConstants.mass = 13;
 
         //FollowerConstants.xMovement = 57.8741;
-        FollowerConstants.xMovement = 10;
+        FollowerConstants.xMovement = 69.2373;
         //FollowerConstants.yMovement = 52.295;
-        FollowerConstants.yMovement = 10;
+        FollowerConstants.yMovement = 59.3023333;
 
-        FollowerConstants.forwardZeroPowerAcceleration = -41.278;
-        FollowerConstants.lateralZeroPowerAcceleration = -59.7819;
+        FollowerConstants.forwardZeroPowerAcceleration = -52.1741;
+        FollowerConstants.lateralZeroPowerAcceleration = -69.517167;
 
         FollowerConstants.translationalPIDFCoefficients.setCoefficients(0.1,0,0.01,0);
         FollowerConstants.useSecondaryTranslationalPID = false;
@@ -42,7 +42,7 @@ public class FConstants {
         FollowerConstants.useSecondaryDrivePID = false;
         FollowerConstants.secondaryDrivePIDFCoefficients.setCoefficients(0.1,0,0,0.6,0); // Not being used, @see useSecondaryDrivePID
 
-        FollowerConstants.zeroPowerAccelerationMultiplier = 4;
+        FollowerConstants.zeroPowerAccelerationMultiplier = 10;
         FollowerConstants.centripetalScaling = 0.0005;
 
         FollowerConstants.pathEndTimeoutConstraint = 500;
