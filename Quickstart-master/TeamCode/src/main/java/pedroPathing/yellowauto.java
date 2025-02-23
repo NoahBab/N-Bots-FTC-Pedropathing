@@ -12,6 +12,10 @@ import com.pedropathing.util.Constants;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import pedroPathing.constants.FConstants;
 import pedroPathing.constants.LConstants;
@@ -28,7 +32,14 @@ import pedroPathing.constants.LConstants;
 
 @Autonomous(name = "Yellow auto", group = "Examples")
 public class yellowauto extends OpMode {
+    private DcMotor rightExtend = null;
+    private DcMotor Tilt = null;
+    private DcMotor leftExtend = null;
 
+
+    private CRServo Intake;
+    private Servo directionalLeft;
+    private Servo directionalRight;
     private Follower follower;
 
     private Timer pathTimer, actionTimer, opmodeTimer;
@@ -47,7 +58,7 @@ public class yellowauto extends OpMode {
      * Lets assume the Robot is facing the human player and we want to score in the bucket */
 
     /** Start Pose of our robot */
-    private final Pose startPose = new Pose(8.5, 109, Math.toRadians(90));
+    private final Pose startPose = new Pose(8.5, 109, Math.toRadians(0));
 
     /** Scoring Pose of our robot. It is facing the submersible at a -45 degree (315 degree) angle. */
     private final Pose pickup1Pose = new Pose(-33.5, -45.5, Math.toRadians(0));
@@ -79,83 +90,43 @@ public class yellowauto extends OpMode {
                 .addPath(
                         // Line 1
                         new BezierCurve(
-                                new Point(8.500, 109.000, Point.CARTESIAN),
-                                new Point(13.437, 139.297, Point.CARTESIAN),
-                                new Point(22.843, 127.204, Point.CARTESIAN)
+                                new Point(9.000, 108.500, Point.CARTESIAN),
+                                new Point(28.762, 111.020, Point.CARTESIAN),
+                                new Point(16.107, 128.660, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(135))
-                .addPath(
-                        // Line 2
-                        new BezierCurve(
-                                new Point(22.843, 127.204, Point.CARTESIAN),
-                                new Point(38.295, 98.538, Point.CARTESIAN),
-                                new Point(48.821, 109.288, Point.CARTESIAN)
-                        )
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(90))
-                .addPath(
-                        // Line 3
-                        new BezierLine(
-                                new Point(48.821, 109.288, Point.CARTESIAN),
-                                new Point(16.572, 131.235, Point.CARTESIAN)
-                        )
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(135))
-                .addPath(
-                        // Line 4
-                        new BezierCurve(
-                                new Point(16.572, 131.235, Point.CARTESIAN),
-                                new Point(45.686, 103.913, Point.CARTESIAN),
-                                new Point(45.014, 126.308, Point.CARTESIAN)
-                        )
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(90))
-                .addPath(
-                        // Line 5
-                        new BezierLine(
-                                new Point(45.014, 126.308, Point.CARTESIAN),
-                                new Point(17.244, 130.787, Point.CARTESIAN)
-                        )
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(135))
-                .addPath(
-                        // Line 6
-                        new BezierCurve(
-                                new Point(17.244, 130.787, Point.CARTESIAN),
-                                new Point(49.269, 115.782, Point.CARTESIAN),
-                                new Point(45.686, 134.146, Point.CARTESIAN)
-                        )
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(90))
-                .addPath(
-                        // Line 7
-                        new BezierLine(
-                                new Point(45.686, 134.146, Point.CARTESIAN),
-                                new Point(17.020, 130.787, Point.CARTESIAN)
-                        )
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(135))
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(135))
                 .build();
     }
 
     /** This switch is called continuously and runs the pathing, at certain points, it triggers the action state.
      * Everytime the switch changes case, it will reset the timer. (This is because of the setPathState() method)
      * The followPath() function sets the follower to run the specific path, but does NOT wait for it to finish before moving on. */
-    public void autonomousPathUpdate() {
+    public void autonomousPathUpdate(){
         switch (pathState) {
             case 0:
                 follower.followPath(grabYellow1,true);
                 setPathState(1);
                 break;
-                /*
-            case 1:
 
-                if(!follower.isBusy()) {
-                    follower.followPath(scorePickup1,true);
+            case 1:
+                leftExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                leftExtend.setTargetPosition(3600);
+                leftExtend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                leftExtend.setPower(.75);
+                directionalLeft.setPosition(.7);
+                directionalRight.setPosition(.7);
+                //if(!follower.isBusy()&&!leftExtend.isBusy()){
+                    Tilt.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    Tilt.setTargetPosition(200);
+                    Tilt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    Tilt.setPower(.5);
+                    Intake.setPower(1);
                     setPathState(2);
-                }
-                break;
+                    break;
+                //}
+
+                /*
             case 2:
 
                 if(!follower.isBusy()) {
@@ -180,8 +151,7 @@ public class yellowauto extends OpMode {
         // These loop the movements of the robot
         follower.update();
         autonomousPathUpdate();
-
-        // Feedback to Driver Hub
+                // Feedback to Driver Hub
         telemetry.addData("path state", pathState);
         telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());
@@ -201,6 +171,17 @@ public class yellowauto extends OpMode {
         follower.setMaxPower(.5);
         follower.setStartingPose(startPose);
         buildPaths();
+
+
+        //define motors
+        Tilt = hardwareMap.get(DcMotor.class, "tilt");
+        Tilt.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftExtend = hardwareMap.get(DcMotor.class, "leftextend");
+        rightExtend = hardwareMap.get(DcMotor.class, "rightextend");
+        Intake = hardwareMap.get(CRServo.class, "intake");
+        directionalLeft = hardwareMap.get(Servo.class, "directionalLeft");
+        directionalRight = hardwareMap.get(Servo.class, "directionalRight");
+        directionalRight.setDirection(Servo.Direction.REVERSE);
     }
 
     /** This method is called continuously after Init while waiting for "play". **/
@@ -209,6 +190,7 @@ public class yellowauto extends OpMode {
 
     /** This method is called once at the start of the OpMode.
      * It runs all the setup actions, including building paths and starting the path system **/
+
     @Override
     public void start() {
         opmodeTimer.resetTimer();
