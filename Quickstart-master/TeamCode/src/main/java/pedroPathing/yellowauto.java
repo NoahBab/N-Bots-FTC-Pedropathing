@@ -91,11 +91,31 @@ public class yellowauto extends OpMode {
                         // Line 1
                         new BezierCurve(
                                 new Point(9.000, 108.500, Point.CARTESIAN),
-                                new Point(28.762, 111.020, Point.CARTESIAN),
-                                new Point(16.107, 128.660, Point.CARTESIAN)
+                                new Point(17.257, 117.348, Point.CARTESIAN),
+                                new Point(13.806, 126.551, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(135))
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-45))
+                .build();
+        grabPickup2 = follower.pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                new Point(13.806, 126.551, Point.CARTESIAN),
+                                new Point(18.983, 120.799, Point.CARTESIAN),
+                                new Point(29.912, 119.840, Point.CARTESIAN)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(0))
+                .build();
+        grabPickup3 = follower.pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                new Point(29.912, 119.840, Point.CARTESIAN),
+                                new Point(18.983, 120.607, Point.CARTESIAN),
+                                new Point(13.806, 126.743, Point.CARTESIAN)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-45))
                 .build();
     }
 
@@ -105,26 +125,125 @@ public class yellowauto extends OpMode {
     public void autonomousPathUpdate(){
         switch (pathState) {
             case 0:
-                follower.followPath(grabYellow1,true);
-                setPathState(1);
-                break;
-
-            case 1:
+                follower.setMaxPower(.5);
+                follower.followPath(grabYellow1,false);
                 leftExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 leftExtend.setTargetPosition(3600);
                 leftExtend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 leftExtend.setPower(.75);
-                directionalLeft.setPosition(.7);
-                directionalRight.setPosition(.7);
-                //if(!follower.isBusy()&&!leftExtend.isBusy()){
+                rightExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                rightExtend.setTargetPosition(-3600);
+                rightExtend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                rightExtend.setPower(-0.75);
+                setPathState(1);
+                break;
+
+            case 1:
+                if (pathTimer.getElapsedTimeSeconds() > 3) {
                     Tilt.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    Tilt.setTargetPosition(200);
+                    Tilt.setTargetPosition(-200);
                     Tilt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     Tilt.setPower(.5);
-                    Intake.setPower(1);
+                    directionalLeft.setPosition(.1);
+                    directionalRight.setPosition(.1);
                     setPathState(2);
-                    break;
-                //}
+                }
+                break;
+            case 2:
+               if(pathTimer.getElapsedTimeSeconds()>3){
+                    Intake.setPower(-1);
+                    setPathState(3);
+               }
+               break;
+            case 3:
+                if(pathTimer.getElapsedTimeSeconds()>3){
+                    Intake.setPower(0);
+                    directionalRight.setPosition(.85);
+                    directionalLeft.setPosition(.85);
+                    Tilt.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    Tilt.setTargetPosition(0);
+                    Tilt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    Tilt.setPower(.5);
+                    setPathState(4);
+                }
+                break;
+            case 4:
+                if(pathTimer.getElapsedTimeSeconds()>3){
+                    leftExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    leftExtend.setTargetPosition(0);
+                    leftExtend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    leftExtend.setPower(1);
+                    rightExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    rightExtend.setTargetPosition(0);
+                    rightExtend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    rightExtend.setPower(-1);
+                    setPathState(5);
+                }
+                break;
+            case 5:
+                if(pathTimer.getElapsedTimeSeconds()>3){
+                    Tilt.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    Tilt.setTargetPosition(3400);
+                    Tilt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    Tilt.setPower(.5);
+                    setPathState(6);
+                }
+                break;
+
+            case 6:
+                follower.setMaxPower(.75);
+                follower.followPath(grabPickup2, true);
+                Intake.setPower(1);
+                setPathState(10000);
+                break;
+            case 10000:
+                if(pathTimer.getElapsedTimeSeconds()>3){
+
+                    setPathState(7);
+                }
+                break;
+            case 7:
+                follower.setMaxPower(.5);
+                follower.followPath(grabPickup3, true);
+                Tilt.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                Tilt.setTargetPosition(-200);
+                Tilt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                Tilt.setPower(.5);
+                setPathState(8);
+                break;
+            case 8:
+                if(pathTimer.getElapsedTimeSeconds()>3){
+                    Intake.setPower(0);
+                    leftExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    leftExtend.setTargetPosition(3600);
+                    leftExtend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    leftExtend.setPower(.75);
+                    rightExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    rightExtend.setTargetPosition(-3600);
+                    rightExtend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    rightExtend.setPower(-0.75);
+                    setPathState(9);
+                }
+                break;
+            case 9:
+                if(pathTimer.getElapsedTimeSeconds()>3){
+                    directionalLeft.setPosition(.1);
+                    directionalRight.setPosition(.1);
+                    setPathState(10);
+                }
+                break;
+            case 10:
+                if(pathTimer.getElapsedTimeSeconds()>3){
+                    Intake.setPower(-1);
+                    setPathState(11);
+                }
+                break;
+            case 11:
+                if(pathTimer.getElapsedTimeSeconds()>3){
+                    Intake.setPower(0);
+                    directionalRight.setPosition(.85);
+                    directionalLeft.setPosition(.85);
+                }
 
                 /*
             case 2:

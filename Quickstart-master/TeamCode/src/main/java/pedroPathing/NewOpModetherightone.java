@@ -89,8 +89,8 @@ public class NewOpModetherightone extends LinearOpMode {
 
 
     private CRServo Intake;
-    private CRServo directionalLeft;
-    private CRServo directionalRight;
+    private Servo directionalLeft;
+    private Servo directionalRight;
 
     static final double INCREMENT   = 0.01;     // amount to slew servo each CYCLE_MS cycle
     static final int    CYCLE_MS    =   50;     // period of each cycle
@@ -114,8 +114,8 @@ public class NewOpModetherightone extends LinearOpMode {
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.RIGHT));
         imu.initialize(parameters);
         Intake = hardwareMap.get(CRServo.class, "intake");
-        directionalLeft = hardwareMap.get(CRServo.class, "directionalLeft");
-        directionalRight = hardwareMap.get(CRServo.class, "directionalRight");
+        directionalLeft = hardwareMap.get(Servo.class, "directionalLeft");
+        directionalRight = hardwareMap.get(Servo.class, "directionalRight");
         //gateservo = hardwareMap.get(Servo.class, "gate");
         /* Define how the hub is mounted on the robot to get the correct Yaw, Pitch and Roll values.
          *
@@ -279,7 +279,7 @@ public class NewOpModetherightone extends LinearOpMode {
 
             }else{
                 Tilt.setPower(0);
-            }
+            }/*
             currentAngle = 90-((currentPos * 360) / 537.7) / 28;
             if(currentAngle>=100){
                 Tilt.setPower(.1);
@@ -293,7 +293,8 @@ public class NewOpModetherightone extends LinearOpMode {
                 } else {
                     Tilt.setPower(0);
                 }
-            }
+            }*/
+                        /*
             //double targetPos =  1/(1.483 * 3.141596) * 537.7 * inches;
             currentExtendInches = (currentExtend*1.483*3.1415)/537.7;
             telemetry.addData("current angle", currentAngle);
@@ -304,15 +305,14 @@ public class NewOpModetherightone extends LinearOpMode {
                 leftExtend.setPower(-0.5);
                 rightExtend.setPower(0.5);
             }else{
+                */
+            //}
                 if (gamepad2.left_bumper) {
                     leftExtend.setPower(-1);
                     rightExtend.setPower(1);
 
-                }else if (gamepad2.left_trigger > 0){
+                }else if (gamepad2.right_bumper){
                     //((temp*537.7*28)/360);
-                    leftExtend.setPower(1);
-                    rightExtend.setPower(-1);
-
                     leftExtend.setPower(1);
                     rightExtend.setPower(-1);
 
@@ -320,33 +320,34 @@ public class NewOpModetherightone extends LinearOpMode {
                     leftExtend.setPower(0);
                     rightExtend.setPower(0);
                 }
-            }
+           // }
+            /*
             if(gamepad2.a){
                 leftExtend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 leftExtend.setTargetPosition(1000);
                 leftExtend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            }
+            }*/
 
-            if (gamepad2.dpad_down){
-                directionalLeft.setPower(1);
-                directionalRight.setPower(-1);
-            }
-            else if (gamepad2.dpad_up){
-                directionalLeft.setPower(-1);
-                directionalRight.setPower(1);
-            }
-            else if (gamepad2.dpad_left){
-                directionalLeft.setPower(1);
-                directionalRight.setPower(1);
-            }
-            else if (gamepad2.dpad_right){
-                directionalLeft.setPower(-1);
-                directionalRight.setPower(-1);
-            }else{
-                directionalLeft.setPower(0);
-                directionalRight.setPower(0);
-            }
+//            if (gamepad2.dpad_down){
+//                directionalLeft.setPower(1);
+//                directionalRight.setPower(-1);
+//            }
+//            else if (gamepad2.dpad_up){
+//                directionalLeft.setPower(-1);
+//                directionalRight.setPower(1);
+//            }
+//            else if (gamepad2.dpad_left){
+//                directionalLeft.setPower(1);
+//                directionalRight.setPower(1);
+//            }
+//            else if (gamepad2.dpad_right){
+//                directionalLeft.setPower(-1);
+//                directionalRight.setPower(-1);
+//            }else{
+//                directionalLeft.setPower(0);
+//                directionalRight.setPower(0);
+//            }
 
 
 //
