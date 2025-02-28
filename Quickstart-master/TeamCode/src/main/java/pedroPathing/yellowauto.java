@@ -3,9 +3,7 @@ package pedroPathing;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.BezierCurve;
-import com.pedropathing.pathgen.BezierLine;
 import com.pedropathing.pathgen.Path;
-import com.pedropathing.pathgen.PathBuilder;
 import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
 import com.pedropathing.util.Constants;
@@ -81,12 +79,12 @@ public class yellowauto extends OpMode {
 
     /* These are our Paths and PathChains that we will define in buildPaths() */
     private Path scorePreload, park;
-    private PathChain grabYellow1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3;
+    private PathChain dumpBlock1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3;
 
     /** Build the paths for the auto (adds, for example, constant/linear headings while doing paths)
      * It is necessary to do this so that all the paths are built before the auto starts. **/
     public void buildPaths() {
-        grabYellow1 = follower.pathBuilder()
+        dumpBlock1 = follower.pathBuilder()
                 .addPath(
                         // Line 1
                         new BezierCurve(
@@ -126,14 +124,14 @@ public class yellowauto extends OpMode {
         switch (pathState) {
             case 0:
                 follower.setMaxPower(.5);
-                follower.followPath(grabYellow1,false);
+                follower.followPath(dumpBlock1,false);
                 leftExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                leftExtend.setTargetPosition(3600);
-                leftExtend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                leftExtend.setPower(.75);
                 rightExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                rightExtend.setTargetPosition(-3600);
+                leftExtend.setTargetPosition(3600);
+                rightExtend.setTargetPosition(3600);
+                leftExtend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 rightExtend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                leftExtend.setPower(.75);
                 rightExtend.setPower(-0.75);
                 setPathState(1);
                 break;
@@ -170,12 +168,12 @@ public class yellowauto extends OpMode {
             case 4:
                 if(pathTimer.getElapsedTimeSeconds()>3){
                     leftExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    leftExtend.setTargetPosition(0);
-                    leftExtend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    leftExtend.setPower(1);
                     rightExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    leftExtend.setTargetPosition(0);
                     rightExtend.setTargetPosition(0);
+                    leftExtend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     rightExtend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    leftExtend.setPower(1);
                     rightExtend.setPower(-1);
                     setPathState(5);
                 }
@@ -215,12 +213,12 @@ public class yellowauto extends OpMode {
                 if(pathTimer.getElapsedTimeSeconds()>3){
                     Intake.setPower(0);
                     leftExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    leftExtend.setTargetPosition(3600);
-                    leftExtend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    leftExtend.setPower(.75);
                     rightExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    rightExtend.setTargetPosition(-3600);
+                    leftExtend.setTargetPosition(3600);
+                    rightExtend.setTargetPosition(3600);
+                    leftExtend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     rightExtend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    leftExtend.setPower(.75);
                     rightExtend.setPower(-0.75);
                     setPathState(9);
                 }
@@ -297,6 +295,7 @@ public class yellowauto extends OpMode {
         Tilt.setDirection(DcMotorSimple.Direction.REVERSE);
         leftExtend = hardwareMap.get(DcMotor.class, "leftextend");
         rightExtend = hardwareMap.get(DcMotor.class, "rightextend");
+        rightExtend.setDirection(DcMotorSimple.Direction.REVERSE);
         Intake = hardwareMap.get(CRServo.class, "intake");
         directionalLeft = hardwareMap.get(Servo.class, "directionalLeft");
         directionalRight = hardwareMap.get(Servo.class, "directionalRight");
